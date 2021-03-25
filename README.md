@@ -15,13 +15,7 @@ Add a section like the following to your Home Assistant config.yaml:
 
 ```
 marshall:
-  <!-- accounts:
-  - api_name: <api name>
-    username: <api username>
-    password: <api password>
-    device_ids:
-    - <device id>
-  basic_auth_creds: <basic auth credentials> -->
+  - address: <network address>
 ```
 
 You will need the following items of information:
