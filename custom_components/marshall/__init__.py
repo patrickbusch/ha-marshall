@@ -29,7 +29,7 @@ def setup(hass: HomeAssistant, config: dict):
     for address in addresses_cfg:
         device = get_device(hass, address)
         hass.data[DOMAIN] = {
-            'address': 'address'
+            'device': device
         }
  
     hass.helpers.discovery.load_platform('sensor', DOMAIN, {}, config)
