@@ -15,7 +15,8 @@ Add a section like the following to your Home Assistant config.yaml:
 
 ```
 marshall:
-  - address: <network address>
+  addresses: 
+    - <network address>
 ```
 
 You will need the following items of information:
