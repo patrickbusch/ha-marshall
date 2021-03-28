@@ -52,6 +52,8 @@ class API(object):
 
         _LOGGER.debug(result_dict)
 
+        return result_dict
+
     def _parse_api_response(self, response, result_dict):
         _LOGGER.debug(response)
         node = response.find('node').text
