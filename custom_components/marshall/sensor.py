@@ -9,15 +9,14 @@ _LOGGER = logging.getLogger(__name__)
 def setup_platform(hass, config, add_entities, discovery_info=None):
     """Set up the sensor platform."""
     _LOGGER.debug("Initializing sensor platform")
-    add_entities([MarshallInputSensor("")])
+    add_entities([MarshallNameSensor(), MarshallPowerSensor(), MarshallVolumeSensor()])
 
 
-class MarshallInputSensor(Entity):
+class MarshallNameSensor(Entity):
 
-    def __init__(self, data):
+    def __init__(self):
         """Initialize the sensor."""
-        _LOGGER.debug("Initializing Marshall input sensor")
-        self._data = data
+        # _LOGGER.debug("Initializing Marshall input sensor")
         self._state = None
 
     @property
@@ -35,3 +34,49 @@ class MarshallInputSensor(Entity):
         This is the only method that should fetch new data for Home Assistant.
         """
         self._state = self.hass.data[DOMAIN]['device'].get_name()
+
+
+class MarshallPowerSensor(Entity):
+
+    def __init__(self):
+        """Initialize the sensor."""
+        self._state = None
+
+    @property
+    def name(self):
+        """Return the name of the sensor."""
+        return 'Marshall Power State'
+
+    @property
+    def state(self):
+        """Return the state of the sensor."""
+        return self._state
+
+    def update(self):
+        """Fetch new state data for the sensor.
+        This is the only method that should fetch new data for Home Assistant.
+        """
+        self._state = self.hass.data[DOMAIN]['device'].get_power()
+
+
+class MarshallVolumeSensor(Entity):
+
+    def __init__(self):
+        """Initialize the sensor."""
+        self._state = None
+
+    @property
+    def name(self):
+        """Return the name of the sensor."""
+        return 'Marshall Volume'
+
+    @property
+    def state(self):
+        """Return the state of the sensor."""
+        return self._state
+
+    def update(self):
+        """Fetch new state data for the sensor.
+        This is the only method that should fetch new data for Home Assistant.
+        """
+        self._state = self.hass.data[DOMAIN]['device'].get_volume()

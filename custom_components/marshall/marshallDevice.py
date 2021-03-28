@@ -9,7 +9,9 @@ from homeassistant.core import HomeAssistant
 from .const import MIN_TIME_BETWEEN_UPDATES
 from .marshallAPI import API
 from .marshallAPIValue import (
-    SysInfoFriendlyname
+    SysInfoFriendlyname,
+    SysPower,
+    SysAudioVolume
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -40,12 +42,17 @@ class MarshallDevice(object):
             return self._state[node]
         else:
             return "ERROR"
-    
+
     def _update(self):
-        result = self._api._api_get_multiple(SysInfoFriendlyname)
+        result = self._api._api_get_multiple([SysInfoFriendlyname, SysPower, SysAudioVolume])
         result['last_update'] = datetime.now()
         self._state.update(result)
 
     def get_name(self):
-        _LOGGER.debug("get_name called")
         return self._get_node(SysInfoFriendlyname)
+
+    def get_power(self):
+        return self._get_node(SysPower)
+
+    def get_volume(self):
+        return self._get_node(SysAudioVolume)

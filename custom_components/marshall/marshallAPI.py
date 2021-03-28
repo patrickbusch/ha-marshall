@@ -3,9 +3,6 @@ import json
 import logging
 import requests
 import xml.etree.ElementTree as ET
-from .marshallAPIValue import (
-    SysInfoFriendlyname
-)
 
 PIN = "1234"
 OKAY_STATE = "FS_OK"
@@ -20,25 +17,27 @@ class API(object):
         self._host = f"http://{self._address}/fsapi/"
 
     def _api_get_multiple(self, nodes):
-        url = f"{self._host}GET_MULTIPLE?pin={PIN}&node={nodes}"
+        url = f"{self._host}GET_MULTIPLE?pin={PIN}"
+        for node in nodes:
+            url += f"&node={node}"
         _LOGGER.debug(f"getting URL {url}")
         response = requests.get(url)
         response.raise_for_status()
         return self._parse_get_multiple_response(response)
 
-    def _api_set(self, node, value):
-        url = f"{self._host}SET/{node}?pin={PIN}&value={value}"
-        response = requests.get(url)
-        response.raise_for_status()
-        content = response.content
-        return content
+    # def _api_set(self, node, value):
+    #     url = f"{self._host}SET/{node}?pin={PIN}&value={value}"
+    #     response = requests.get(url)
+    #     response.raise_for_status()
+    #     content = response.content
+    #     return content
 
-    def _api_list_get_next(self, node, max_items):
-        url = f"{self._host}LIST_GET_NEXT/{node}/-1?pin={PIN}&maxItems={max_items}"
-        response = requests.get(url)
-        response.raise_for_status()
-        content = response.content
-        return content
+    # def _api_list_get_next(self, node, max_items):
+    #     url = f"{self._host}LIST_GET_NEXT/{node}/-1?pin={PIN}&maxItems={max_items}"
+    #     response = requests.get(url)
+    #     response.raise_for_status()
+    #     content = response.content
+    #     return content
 
     def _parse_get_multiple_response(self, response):
         xml = ET.fromstring(response.content)
