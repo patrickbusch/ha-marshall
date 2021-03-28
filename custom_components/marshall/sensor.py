@@ -34,5 +34,4 @@ class MarshallInputSensor(Entity):
         """Fetch new state data for the sensor.
         This is the only method that should fetch new data for Home Assistant.
         """
-        # http://192.168.1.33/fsapi/GET_MULTIPLE?pin=1234&node=netremote.sys.info.friendlyname
         self._state = self.hass.data[DOMAIN]['device'].get_name()

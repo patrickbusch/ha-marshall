@@ -1,4 +1,4 @@
-"""Constants for the Smartbox integration."""
+"""Constants for the Marshall integration."""
 
 from datetime import timedelta
 

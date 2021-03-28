@@ -3,6 +3,9 @@ import logging
 
 from homeassistant.core import HomeAssistant
 from .marshallAPI import API
+from .marshallAPIValue import (
+    SysInfoFriendlyname
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -17,4 +20,4 @@ class MarshallDevice(object):
 
     def get_name(self):
         _LOGGER.debug("get_name called")
-        return self._api.get_name()
+        return self._api._api_get_multiple(SysInfoFriendlyname)

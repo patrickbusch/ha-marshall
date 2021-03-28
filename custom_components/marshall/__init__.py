@@ -8,7 +8,7 @@ import logging
 from homeassistant.core import HomeAssistant
 
 from .const import DOMAIN
-from .model import get_device
+from .marshallDevice import get_device
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -27,7 +27,7 @@ def setup(hass: HomeAssistant, config: dict):
     _LOGGER.debug(f"addresses: {addresses_cfg}")
 
     for address in addresses_cfg:
-        device = get_device(hass, address)
+        device = get_device(hass, address['address'])
         hass.data[DOMAIN] = {
             'device': device
         }
