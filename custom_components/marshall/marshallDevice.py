@@ -1,12 +1,8 @@
 import asyncio
 import logging
 
-from datetime import (
-    datetime,
-    timedelta
-)
+from datetime import datetime
 from homeassistant.core import HomeAssistant
-from .const import MIN_TIME_BETWEEN_UPDATES
 from .marshallAPI import API
 from .marshallAPIValue import (
     SysInfoFriendlyname,
@@ -31,8 +27,6 @@ class MarshallDevice(object):
         update_needed = False
         _LOGGER.debug(self._state.keys())
         if (node not in self._state.keys()):
-            update_needed = True
-        if (self._state['last_update'] + MIN_TIME_BETWEEN_UPDATES < datetime.now()):
             update_needed = True
 
         if (update_needed): 
