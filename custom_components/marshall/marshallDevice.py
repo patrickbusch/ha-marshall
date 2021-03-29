@@ -46,7 +46,7 @@ class MarshallDevice(object):
         return self._get_node(SysInfoFriendlyname)
 
     def get_power(self):
-        return self._get_node(SysPower)
+        return self._get_node(SysPower) == '1'
 
     def get_volume(self):
         return self._get_node(SysAudioVolume)

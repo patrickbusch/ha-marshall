@@ -12,7 +12,7 @@ SCAN_INTERVAL = timedelta(minutes=1)
 def setup_platform(hass, config, add_entities, discovery_info=None):
     """Set up the sensor platform."""
     _LOGGER.debug("Initializing sensor platform")
-    add_entities([MarshallNameSensor(), MarshallPowerSensor(), MarshallVolumeSensor()])
+    add_entities([MarshallNameSensor(), MarshallVolumeSensor()])
 
 
 class MarshallNameSensor(Entity):
@@ -20,7 +20,7 @@ class MarshallNameSensor(Entity):
     def __init__(self):
         """Initialize the sensor."""
         # _LOGGER.debug("Initializing Marshall input sensor")
-        self._state = None
+        self._state = 0
 
     @property
     def name(self):
@@ -37,29 +37,6 @@ class MarshallNameSensor(Entity):
         This is the only method that should fetch new data for Home Assistant.
         """
         self._state = self.hass.data[DOMAIN]['device'].get_name()
-
-
-class MarshallPowerSensor(Entity):
-
-    def __init__(self):
-        """Initialize the sensor."""
-        self._state = None
-
-    @property
-    def name(self):
-        """Return the name of the sensor."""
-        return 'Marshall Power State'
-
-    @property
-    def state(self):
-        """Return the state of the sensor."""
-        return self._state
-
-    def update(self):
-        """Fetch new state data for the sensor.
-        This is the only method that should fetch new data for Home Assistant.
-        """
-        self._state = self.hass.data[DOMAIN]['device'].get_power()
 
 
 class MarshallVolumeSensor(Entity):

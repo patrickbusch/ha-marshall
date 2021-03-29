@@ -33,6 +33,7 @@ def setup(hass: HomeAssistant, config: dict):
         }
  
     hass.helpers.discovery.load_platform('sensor', DOMAIN, {}, config)
+    hass.helpers.discovery.load_platform('binary_sensor', DOMAIN, {}, config)
 
     _LOGGER.debug("Finished setting up Marshall integration")
 
