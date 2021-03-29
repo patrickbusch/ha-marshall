@@ -20,7 +20,7 @@ class MarshallNameSensor(Entity):
     def __init__(self):
         """Initialize the sensor."""
         # _LOGGER.debug("Initializing Marshall input sensor")
-        self._state = 0
+        self._state = None
 
     @property
     def name(self):
@@ -43,7 +43,7 @@ class MarshallVolumeSensor(Entity):
 
     def __init__(self):
         """Initialize the sensor."""
-        self._state = None
+        self._state = 0
 
     @property
     def name(self):
@@ -53,7 +53,7 @@ class MarshallVolumeSensor(Entity):
     @property
     def state(self):
         """Return the state of the sensor."""
-        return self._state
+        return int(self._state * 100)
 
     def update(self):
         """Fetch new state data for the sensor.

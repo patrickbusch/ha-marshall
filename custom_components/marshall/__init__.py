@@ -14,8 +14,7 @@ _LOGGER = logging.getLogger(__name__)
 
 CONF_ADDRESSES = 'addresses'
 
-PLATFORMS = ["sensor"]
-
+PLATFORMS = ["binary_sensor", "sensor", "media_player"]
 
 def setup(hass: HomeAssistant, config: dict):
     """Set up the Marshall component."""
@@ -32,8 +31,8 @@ def setup(hass: HomeAssistant, config: dict):
             'device': device
         }
  
-    hass.helpers.discovery.load_platform('sensor', DOMAIN, {}, config)
-    hass.helpers.discovery.load_platform('binary_sensor', DOMAIN, {}, config)
+    for component in PLATFORMS:
+        hass.helpers.discovery.load_platform(component, DOMAIN, {}, config)
 
     _LOGGER.debug("Finished setting up Marshall integration")
 
