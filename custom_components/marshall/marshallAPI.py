@@ -25,19 +25,19 @@ class API(object):
         response.raise_for_status()
         return self._parse_get_multiple_response(response)
 
-    # def _api_set(self, node, value):
-    #     url = f"{self._host}SET/{node}?pin={PIN}&value={value}"
-    #     response = requests.get(url)
-    #     response.raise_for_status()
-    #     content = response.content
-    #     return content
+    def _api_set(self, node, value):
+        url = f"{self._host}SET/{node}?pin={PIN}&value={value}"
+        _LOGGER.debug(f"getting URL {url}")
+        response = requests.get(url)
+        response.raise_for_status()
+        self._parse_set_response(response)
 
-    # def _api_list_get_next(self, node, max_items):
-    #     url = f"{self._host}LIST_GET_NEXT/{node}/-1?pin={PIN}&maxItems={max_items}"
-    #     response = requests.get(url)
-    #     response.raise_for_status()
-    #     content = response.content
-    #     return content
+    def _api_list_get_next(self, node, max_items):
+        url = f"{self._host}LIST_GET_NEXT/{node}/-1?pin={PIN}&maxItems={max_items}"
+        _LOGGER.debug(f"getting URL {url}")
+        response = requests.get(url)
+        response.raise_for_status()
+        return self._parse_list_response(response)
 
     def _parse_get_multiple_response(self, response):
         xml = ET.fromstring(response.content)
@@ -63,6 +63,38 @@ class API(object):
         else:
             text = response.find('value')[0].text
             result_dict[node] = text  
+
+    def _parse_list_response(self, response):
+        xml = ET.fromstring(response.content)
+
+        _LOGGER.debug(f"xml {xml}")
+
+        status = xml.find('status').text
+        
+        if (status != OKAY_STATE):
+            _LOGGER.debug(f"ERROR for list response")
+
+        result_list = []
+
+        for item in xml.iter('item'):
+
+            name = item.findall(".//field[@name='name']")[0][0].text
+            _LOGGER.debug(f'{name}')
+            if name:
+                result_list.append(name)
+            
+        return result_list
+            
+
+    def _parse_set_response(self, response):
+        xml = ET.fromstring(response.content)
+
+        _LOGGER.debug(f"xml {xml}")
+        status = xml.find('status').text
+        
+        if (status != OKAY_STATE):
+            _LOGGER.debug(f"ERROR for set response")
+
 
 # <fsapiGetMultipleResponse>
 # <fsapiResponse>
