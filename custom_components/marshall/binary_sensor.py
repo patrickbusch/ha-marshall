@@ -7,7 +7,7 @@ from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
-SCAN_INTERVAL = timedelta(minutes=1)
+SCAN_INTERVAL = timedelta(seconds=5)
 
 def setup_platform(hass, config, add_entities, discovery_info=None):
     """Set up the binary sensor platform."""

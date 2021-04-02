@@ -1,7 +1,10 @@
 import asyncio
 import logging
 
-from datetime import datetime
+from datetime import (
+    datetime,
+    timedelta
+)
 from homeassistant.core import HomeAssistant
 from .marshallAPI import API
 from .marshallAPIValue import (
@@ -12,10 +15,16 @@ from .marshallAPIValue import (
     SysNetWlanMacaddress,
     NavState,
     NavPresets,
-    NavPresetCurrentpreset
+    NavPresetCurrentpreset,
+    PlayStatus,
+    PlayInfoArtist,
+    PlayInfoName,
+    NavActionSelectPreset,
+    PlayControl
 )
 
 _LOGGER = logging.getLogger(__name__)
+VOLUME_STEPS = 33
 
 def get_device(hass: HomeAssistant, address):
     return MarshallDevice(address, API(address))
@@ -34,6 +43,9 @@ class MarshallDevice(object):
         if (node not in self._state.keys()):
             update_needed = True
 
+        if (self._state['last_update'] + timedelta(seconds=30) < datetime.now()):
+            update_needed = True
+
         if (update_needed): 
             self._set_nav_state()
             self._list_presets()
@@ -46,7 +58,17 @@ class MarshallDevice(object):
             return "ERROR"
 
     def _update_get_multiple(self):
-        result = self._api._api_get_multiple([SysInfoFriendlyname, SysPower, SysAudioVolume, SysAudioMute, SysNetWlanMacaddress, NavPresetCurrentpreset])
+        result = self._api._api_get_multiple([
+            SysInfoFriendlyname, 
+            SysPower, 
+            SysAudioVolume, 
+            SysAudioMute, 
+            SysNetWlanMacaddress, 
+            NavPresetCurrentpreset,
+            PlayInfoArtist,
+            PlayInfoName,
+            PlayStatus
+            ])
         self._state.update(result)
 
     def _set_nav_state(self):
@@ -67,18 +89,55 @@ class MarshallDevice(object):
         return self._get_node(SysPower) == '1'
 
     def get_volume(self):
-        steps = 33
-        return round(float(self._get_node(SysAudioVolume)) / steps, 2)
+        return round(float(self._get_node(SysAudioVolume)) / VOLUME_STEPS, 2)
 
     def get_mute(self):
         return self._get_node(SysAudioMute) == '1'
 
     def get_source(self):
-        return 'SRC1'
+        source = int(self._get_node(NavPresetCurrentpreset))
+        if source == 4294967295:
+            return None
+        elif source >= len(self._state['presets']):
+            return None
+        else:
+            return self._state['presets'][int(source)]
 
     def get_sources(self):
         return self._state['presets']
 
+    def get_title(self):
+        return self._get_node(PlayInfoName)
+
+    def get_artist(self):
+        return self._get_node(PlayInfoArtist)
+
+    def get_play_state(self):
+        return self._get_node(PlayStatus)
+
+    def set_next_track(self):
+        self._api._api_set(PlayControl, 3)
+
+    def set_prev_track(self):
+        self._api._api_set(PlayControl, 4)
+
+    def set_play(self):
+        self._api._api_set(PlayControl, 0)
+
+    def set_pause(self):
+        self._api._api_set(PlayControl, 0)
+
+    def set_stop(self):
+        self._api._api_set(PlayControl, 0)
+
+    def set_source(self, source):
+        _LOGGER.debug(f"setting source to {source}")
+        self._api._api_set(NavActionSelectPreset, self._state['presets'].index(source))
+
+    def set_volume(self, volume):
+        _LOGGER.debug(f"setting volume to {volume}")
+        target = int(round(volume * VOLUME_STEPS, 0))
+        self._api._api_set(SysAudioVolume, target)
 
     def get_state(self):        
         return {
@@ -86,8 +145,10 @@ class MarshallDevice(object):
             'name': self.get_name(),
             'volume': self.get_volume(),
             'mute': self.get_mute(),
-            'sources': ['SRC1', 'SRC2'],
-            'source': self.get_source(),
+            'sources': self.get_sources(),
             'mac_address': self.get_mac_address(),
-            'sources': self.get_sources()
+            'artist': self.get_artist(),
+            'title': self.get_title(),
+            'play_state': self.get_play_state(),
+            'source': self.get_source()
         }
