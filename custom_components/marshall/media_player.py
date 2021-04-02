@@ -6,7 +6,6 @@ from homeassistant.components.media_player.const import (
     SUPPORT_PLAY,
     SUPPORT_PLAY_MEDIA,
     SUPPORT_SELECT_SOURCE,
-    SUPPORT_STOP,
     SUPPORT_VOLUME_MUTE,
     SUPPORT_VOLUME_SET,
 )
@@ -125,10 +124,10 @@ class MarshallPlayer(MediaPlayerEntity):
         self.hass.data[DOMAIN]['device'].set_pause()
         self._state['play_state'] = '3'
 
-    def media_stop(self):
-        """Send pause command."""
-        self.hass.data[DOMAIN]['device'].set_stop()
-        self._state['play_state'] = '0'
+    # def media_stop(self):
+    #     """Send pause command."""
+    #     self.hass.data[DOMAIN]['device'].set_stop()
+    #     self._state['play_state'] = '0'
 
     # def media_previous_track(self):
     #     """Send previous track command."""
